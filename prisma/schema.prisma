@@ -24,6 +24,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   recipes       Recipe[]
+  ratings       Rating[]
+  comments      Comment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -88,22 +90,54 @@ model Tag {
 }
 
 model Recipe {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
   description  String?
+  image        String?
   ingredients  Json
   instructions String[]
   prepTime     Int
   cookTime     Int
   servings     Int
   categoryId   String
-  category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category     Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   authorId     String
-  author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  tags         Tag[]    @relation("RecipeTags")
+  author       User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  tags         Tag[]     @relation("RecipeTags")
+  ratings      Rating[]
+  comments     Comment[]
+  avgRating    Float?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("recipes")
+}
+
+model Rating {
+  id       String @id @default(cuid())
+  rating   Int
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ratings")
+}
+
+model Comment {
+  id       String @id @default(cuid())
+  content  String
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
 }

@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
+import {auth} from "@/auth";
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 
 export const POST = async (req: Request) => {
   try {
@@ -14,6 +14,7 @@ export const POST = async (req: Request) => {
       cookTime,
       servings,
       categoryId,
+        authorId
     } = await req.json();
     const tags = await prisma.tag.findMany({
       where: {
@@ -37,7 +38,7 @@ export const POST = async (req: Request) => {
         },
         author: {
           connect: {
-            id: "",
+            id: authorId,
           },
         },
       },

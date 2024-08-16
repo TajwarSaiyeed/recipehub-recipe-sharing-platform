@@ -1,6 +1,5 @@
 "use client";
 
-import { Recipe, User } from "@prisma/client";
 import { FC } from "react";
 import UsersCard from "@/app/admin/users/users-card";
 import SearchBar from "@/components/search-bar";

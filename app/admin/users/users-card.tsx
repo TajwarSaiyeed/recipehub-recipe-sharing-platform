@@ -3,11 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EyeIcon, FilePenIcon, StarIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Recipe, User } from "@prisma/client";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { dateFormatted } from "@/lib/utils";
 import { FC } from "react";
 import { UserCardProps } from "./types";
+import Link from "next/link";
 
 const UsersCard: FC<UserCardProps> = ({ user }) => {
   const date = new Date(user.createdAt);
@@ -15,7 +15,7 @@ const UsersCard: FC<UserCardProps> = ({ user }) => {
     <Card className="p-6">
       <div className="flex items-center gap-4">
         <Avatar className="h-12 w-12">
-          <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
+          <AvatarImage src="/placeholder-user.jpg" alt="user" />
           <AvatarFallback>
             {user?.name
               ?.split(" ")
@@ -48,10 +48,16 @@ const UsersCard: FC<UserCardProps> = ({ user }) => {
       </div>
       <Separator className="my-4" />
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm">
+        <Link
+          href={`/admin/users/${user.id}`}
+          className={buttonVariants({
+            variant: "outline",
+            size: "sm",
+          })}
+        >
           <EyeIcon className="mr-2 h-4 w-4" />
           View
-        </Button>
+        </Link>
         <Button variant="outline" size="sm">
           <FilePenIcon className="mr-2 h-4 w-4" />
           Edit
