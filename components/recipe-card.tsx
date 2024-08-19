@@ -28,7 +28,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
               fill
               loading={"lazy"}
               className={
-                "object-cover w-full h-full border border-zinc-100 rounded-xl"
+                "object-cover w-64 h-64 border border-zinc-100 rounded-xl"
               }
             />
           </Link>

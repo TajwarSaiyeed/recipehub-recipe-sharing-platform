@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import TopLoader from "@/components/top-loader";
+import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +21,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased mx-auto max-w-7xl p-5",
+          inter.className
+        )}
+      >
         <SessionProvider>
           {children}
+          <Toaster richColors />
           <TopLoader />
         </SessionProvider>
       </body>
