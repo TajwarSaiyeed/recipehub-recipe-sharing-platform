@@ -26,6 +26,7 @@ model User {
   recipes       Recipe[]
   ratings       Rating[]
   comments      Comment[]
+  favRecipes    Recipe[]  @relation("UserFavRecipes")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -107,6 +108,7 @@ model Recipe {
   ratings      Rating[]
   comments     Comment[]
   avgRating    Float?
+  favUsers     User[]    @relation("UserFavRecipes")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
