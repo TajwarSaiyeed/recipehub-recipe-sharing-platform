@@ -1,8 +1,20 @@
 "use client";
-import { FC } from "react";
 import Link from "next/link";
+import { FC, useState } from "react";
 import Image from "next/image";
-import { StarIcon, TagIcon, User2Icon } from "lucide-react";
+import {
+  Bookmark,
+  LoaderCircle,
+  StarIcon,
+  TagIcon,
+  User2Icon,
+} from "lucide-react";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import CustomTooltip from "@/components/custom-tooltip";
+import { SaveForLater } from "@/actions/save-for-later";
 import { Category, Rating, Recipe, Tag, User } from "@prisma/client";
 
 type RecipeWithCategoryTags = Recipe & {
@@ -10,6 +22,7 @@ type RecipeWithCategoryTags = Recipe & {
   tags: Tag[];
   ratings: Rating[];
   author: User;
+  favUsers: User[];
 };
 
 interface RecipeCardProps {
@@ -17,6 +30,31 @@ interface RecipeCardProps {
 }
 
 const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
+  const [loading, setLoading] = useState(false);
+  const session = useSession();
+  const pathName = usePathname();
+
+  const isSavedForLater = recipe.favUsers.some(
+    (user) => user.id === session.data?.user?.id
+  );
+  const handleSaveForLater = async () => {
+    try {
+      setLoading(true);
+      const save = await SaveForLater(recipe.id, pathName);
+      if (save?.status) {
+        toast.success("Success", {
+          description: save.message,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error", {
+        description: "Failed to save recipe for later",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="relative flex flex-col justify-between overflow-hidden rounded-lg group">
       <div>
@@ -32,10 +70,26 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
               }
             />
           </Link>
+          <CustomTooltip content={"Save for later"}>
+            <Button
+              onClick={handleSaveForLater}
+              className={"rounded-full w-6 h-6 absolute right-2 top-2"}
+              variant={isSavedForLater ? "default" : "outline"}
+              size={"icon"}
+            >
+              {loading ? (
+                <LoaderCircle className={"w-4 h-4 animate-spin"} />
+              ) : (
+                <Bookmark className={"w-4 h-4"} />
+              )}
+            </Button>
+          </CustomTooltip>
         </div>
         <div className="p-2">
           <Link href={`/recipes/${recipe.id}`}>
-            <h3 className="text-lg font-semibold md:text-xl">{recipe.title}</h3>
+            <h3 className="text-[16px] sm:text-lg font-semibold md:text-xl">
+              {recipe.title}
+            </h3>
             <p className="text-sm text-muted-foreground">
               {recipe.description}
             </p>
@@ -52,7 +106,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
             {recipe.author.name}
           </div>
         </Link>
-        <div className="flex items-center justify-between px-1 py-2 bg-background">
+        <div className="flex gap-2 flex-wrap items-start justify-between px-1 py-2 bg-background">
           <div className="flex items-center gap-1 text-primary">
             <StarIcon className="w-5 h-5" />
             <div className="font-medium">

@@ -1,9 +1,11 @@
-import { StarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import RecipeCard from "@/components/recipe-card";
+import { auth } from "@/auth";
 import Image from "next/image";
+import { StarIcon } from "lucide-react";
 import { getUserDetails } from "./actions";
+import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import RecipeCard from "@/components/recipe-card";
+import { Separator } from "@/components/ui/separator";
 
 interface UserProps {
   params: {
@@ -14,10 +16,13 @@ interface UserProps {
 export const revalidate = 60;
 
 const User = async ({ params }: UserProps) => {
+  const session = await auth();
+  if (!session) return redirect("/sign-in");
+  if (session.user.role !== "Admin") return redirect("/");
   const { user, avgRating } = await getUserDetails(params.id);
   return (
     <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-16">
-      <div className="grid md:grid-cols-[1fr_3fr] gap-8 md:gap-12">
+      <div className="grid lg:grid-cols-[1fr_3fr] gap-8 md:gap-12">
         <div className="flex flex-col items-center gap-6">
           <div
             className={

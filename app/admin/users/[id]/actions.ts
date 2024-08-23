@@ -13,6 +13,7 @@ export const getUserDetails = async (id: string) => {
           tags: true,
           ratings: true,
           author: true,
+          favUsers: true,
         },
       },
     },

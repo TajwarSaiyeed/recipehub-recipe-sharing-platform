@@ -1,10 +1,12 @@
+import "./globals.css";
+import { cn } from "@/lib/utils";
+import { signOut } from "@/auth";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { SessionProvider } from "next-auth/react";
 import TopLoader from "@/components/top-loader";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +21,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const handleSignOut = async () => {
+    "use server";
+    console.log("signing out");
+    await signOut();
+  };
   return (
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased mx-auto max-w-7xl p-5",
+          "min-h-screen bg-background font-sans antialiased mx-auto max-w-7xl p-5 relative",
           inter.className
         )}
       >
@@ -31,6 +38,9 @@ export default function RootLayout({
           {children}
           <Toaster richColors />
           <TopLoader />
+          <form action={handleSignOut}>
+            <Button>SignOut</Button>
+          </form>
         </SessionProvider>
       </body>
     </html>

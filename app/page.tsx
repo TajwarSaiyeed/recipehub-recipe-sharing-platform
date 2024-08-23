@@ -9,6 +9,7 @@ export default async function Home() {
       tags: true,
       ratings: true,
       author: true,
+      favUsers: true,
     },
   });
 
