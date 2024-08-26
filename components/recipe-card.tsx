@@ -1,7 +1,14 @@
 "use client";
 import Link from "next/link";
-import { FC, useState } from "react";
+import { toast } from "sonner";
 import Image from "next/image";
+import { FC, useState } from "react";
+import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { SaveForLater } from "@/actions/save-for-later";
+import CustomTooltip from "@/components/custom-tooltip";
+import { Category, Rating, Recipe, Tag, User } from "@prisma/client";
 import {
   Bookmark,
   LoaderCircle,
@@ -9,13 +16,6 @@ import {
   TagIcon,
   User2Icon,
 } from "lucide-react";
-import { toast } from "sonner";
-import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import CustomTooltip from "@/components/custom-tooltip";
-import { SaveForLater } from "@/actions/save-for-later";
-import { Category, Rating, Recipe, Tag, User } from "@prisma/client";
 
 type RecipeWithCategoryTags = Recipe & {
   category: Category;
