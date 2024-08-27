@@ -1,5 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { StarIcon } from "lucide-react";
 import { FC } from "react";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -12,7 +10,8 @@ import Instructions from "./components/instructions";
 import RecipeTags from "./components/recipe-tags";
 import RecipeActions from "./components/recipe-actions";
 import getSession from "@/lib/get-session";
-import SimilarRecipes from "./components/similar-recipes";
+import SimilarRecipes from "@/app/(recipes)/recipes/[recipeid]/components/similar-recipes";
+import RecipeReviews from "@/app/(recipes)/recipes/[recipeid]/components/recipe-reviews";
 
 interface RecipePageProps {
   params: {
@@ -29,8 +28,13 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
     include: {
       category: true,
       tags: true,
-      ratings: true,
       favUsers: true,
+      reviews: {
+        include: {
+          user: true,
+        },
+        take: 5,
+      },
     },
   });
 
@@ -44,14 +48,13 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
   const recipeImage = recipe.image;
   const {
     title,
-    description,
     instructions,
     prepTime,
     cookTime,
     servings,
-    tags,
     category,
-    ratings,
+    reviews,
+    tags,
   } = recipe;
   const ingredients = recipe?.ingredients as
     | { name: string; quantity: string }[]
@@ -78,10 +81,12 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
             <RecipeHeader
               title={title}
               rating={
-                ratings.reduce((acc, rating) => acc + rating.rating, 0) /
-                  ratings.length || 0
+                reviews.reduce(
+                  (acc: any, review: { rating: any }) => acc + review.rating,
+                  0
+                ) / reviews.length || 0
               }
-              reviews={ratings.length}
+              reviews={reviews.length}
             />
             <RecipeDetails
               prepTime={prepTime}
@@ -94,57 +99,12 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
           </div>
         </div>
         <SimilarRecipes
-          title={title}
           category={category.name}
           tags={tags}
           recipeId={recipeid}
         />
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold">Reviews</h2>
-          <div className="mt-6 space-y-6">
-            <div className="flex items-start gap-4">
-              <Avatar className="h-10 w-10 border">
-                <AvatarImage src="/placeholder-user.jpg" alt="User Avatar" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">John Doe</div>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <StarIcon className="h-4 w-4 fill-primary" />
-                    <span>5</span>
-                  </div>
-                </div>
-                <p className="mt-2 text-muted-foreground">
-                  This recipe is absolutely delicious! The chicken is so tender
-                  and the sauce is creamy and flavorful. I&apos;ll definitely be
-                  making this again.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <Avatar className="h-10 w-10 border">
-                <AvatarImage src="/placeholder-user.jpg" alt="User Avatar" />
-                <AvatarFallback>SA</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">Sarah Anderson</div>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <StarIcon className="h-4 w-4 fill-primary" />
-                    <span>4</span>
-                  </div>
-                </div>
-                <p className="mt-2 text-muted-foreground">
-                  I really enjoyed this recipe. The garlic and Parmesan flavors
-                  complement the chicken perfectly. The only thing I would
-                  change is to add a bit more seasoning to the chicken.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-12 flex justify-between gap-4">
+        <RecipeReviews recipeId={recipeid} />
+        <div className="mt-12 flex flex-wrap justify-between gap-4">
           <RecipeActions
             recipeId={recipeid}
             isSavedForLater={isSavedForLater}

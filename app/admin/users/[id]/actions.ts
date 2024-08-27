@@ -11,9 +11,9 @@ export const getUserDetails = async (id: string) => {
         include: {
           category: true,
           tags: true,
-          ratings: true,
           author: true,
           favUsers: true,
+          reviews: true,
         },
       },
     },

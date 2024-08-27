@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Tag } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton"; // Import the Skeleton component
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SimilarRecipesProps {
   category: string;
@@ -31,10 +31,6 @@ const SimilarRecipes: FC<SimilarRecipesProps> = ({
           recipeId,
         });
         setSimilarFound(response.data.similar_found);
-        console.log(
-          "[SimilarRecipes] Similar found:",
-          response.data.similar_found
-        );
         return response.data.similarRecipes;
       } catch (error) {
         console.error("Error fetching similar recipes:", error);

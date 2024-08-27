@@ -1,6 +1,6 @@
-import {type ClassValue, clsx} from "clsx";
-import {twMerge} from "tailwind-merge";
-import {toast} from "sonner";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -19,8 +19,8 @@ export const calculateAverageRating = (recipes: any[]) => {
   let ratingCount = 0;
 
   recipes?.forEach((recipe) => {
-    recipe.ratings.forEach((rating: any) => {
-      totalRatings += rating.rating;
+    recipe.reviews.forEach((review: any) => {
+      totalRatings += review.rating;
       ratingCount += 1;
     });
   });
@@ -28,8 +28,7 @@ export const calculateAverageRating = (recipes: any[]) => {
   return ratingCount > 0 ? totalRatings / ratingCount : 0;
 };
 
-
 export const onCopy = async (text: string) => {
-  await navigator.clipboard.writeText(text)
-  toast.success('Copied to the clipboard.')
-}
+  await navigator.clipboard.writeText(text);
+  toast.success("Copied to the clipboard.");
+};

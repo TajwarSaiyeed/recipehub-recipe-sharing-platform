@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { SaveForLater } from "@/actions/save-for-later";
 import CustomTooltip from "@/components/custom-tooltip";
-import { Category, Rating, Recipe, Tag, User } from "@prisma/client";
+import { Category, Recipe, Review, Tag, User } from "@prisma/client";
 import {
   Bookmark,
   LoaderCircle,
@@ -20,7 +20,7 @@ import {
 type RecipeWithCategoryTags = Recipe & {
   category: Category;
   tags: Tag[];
-  ratings: Rating[];
+  reviews: Review[];
   author: User;
   favUsers: User[];
 };
@@ -110,12 +110,12 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
           <div className="flex items-center gap-1 text-primary">
             <StarIcon className="w-5 h-5" />
             <div className="font-medium">
-              {recipe.ratings.length > 0
+              {recipe.reviews.length > 0
                 ? (
-                    recipe.ratings.reduce(
-                      (acc, rating) => acc + rating.rating,
+                    recipe.reviews.reduce(
+                      (acc, review) => acc + review.rating,
                       0
-                    ) / recipe.ratings.length
+                    ) / recipe.reviews.length
                   ).toFixed(2)
                 : "0.00"}
             </div>

@@ -7,9 +7,9 @@ export default async function Home() {
     include: {
       category: true,
       tags: true,
-      ratings: true,
       author: true,
       favUsers: true,
+      reviews: true,
     },
   });
 
