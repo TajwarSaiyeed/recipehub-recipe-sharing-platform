@@ -1,26 +1,19 @@
 "use client";
 import Link from "next/link";
-import { toast } from "sonner";
+import {toast} from "sonner";
 import Image from "next/image";
-import { FC, useState } from "react";
-import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { SaveForLater } from "@/actions/save-for-later";
+import {FC, useState} from "react";
+import {useSession} from "next-auth/react";
+import {usePathname} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {SaveForLater} from "@/actions/save-for-later";
 import CustomTooltip from "@/components/custom-tooltip";
-import { Category, Recipe, Review, Tag, User } from "@prisma/client";
-import {
-  Bookmark,
-  LoaderCircle,
-  StarIcon,
-  TagIcon,
-  User2Icon,
-} from "lucide-react";
+import {Category, Recipe, Tag, User} from "@prisma/client";
+import {Bookmark, LoaderCircle, StarIcon, TagIcon, User2Icon,} from "lucide-react";
 
 type RecipeWithCategoryTags = Recipe & {
   category: Category;
   tags: Tag[];
-  reviews: Review[];
   author: User;
   favUsers: User[];
 };
@@ -110,14 +103,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
           <div className="flex items-center gap-1 text-primary">
             <StarIcon className="w-5 h-5" />
             <div className="font-medium">
-              {recipe.reviews.length > 0
-                ? (
-                    recipe.reviews.reduce(
-                      (acc, review) => acc + review.rating,
-                      0
-                    ) / recipe.reviews.length
-                  ).toFixed(2)
-                : "0.00"}
+              {recipe.avgRating.toFixed(1)}
             </div>
             <div className="text-muted-foreground">/5</div>
           </div>

@@ -99,13 +99,14 @@ model Recipe {
   prepTime     Int
   cookTime     Int
   servings     Int
+  totalReviews Int      @default(0)
   categoryId   String
   category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   authorId     String
   author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   tags         Tag[]    @relation("RecipeTags")
   reviews      Review[]
-  avgRating    Float?
+  avgRating    Float    @default(0)
   favUsers     User[]   @relation("UserFavRecipes")
 
   createdAt DateTime @default(now())

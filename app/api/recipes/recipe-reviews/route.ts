@@ -10,7 +10,7 @@ export const POST = async (req: Request) => {
       where: {
         recipeId,
       },
-      take: 3,
+      take: 10,
       orderBy: {
         createdAt: "asc",
       },

@@ -12,6 +12,7 @@ import RecipeActions from "./components/recipe-actions";
 import getSession from "@/lib/get-session";
 import SimilarRecipes from "@/app/(recipes)/recipes/[recipeid]/components/similar-recipes";
 import RecipeReviews from "@/app/(recipes)/recipes/[recipeid]/components/recipe-reviews";
+import { Separator } from "@/components/ui/separator";
 
 interface RecipePageProps {
   params: {
@@ -29,14 +30,19 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
       category: true,
       tags: true,
       favUsers: true,
-      reviews: {
-        include: {
-          user: true,
-        },
-        take: 5,
-      },
     },
   });
+
+  let reviewIsExists;
+
+  if (session?.user?.id) {
+    reviewIsExists = await prisma.review.findFirst({
+      where: {
+        recipeId: recipeid,
+        userId: session?.user.id,
+      },
+    });
+  }
 
   if (!recipe) {
     toast.error("Recipe not found", {
@@ -46,16 +52,8 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
   }
 
   const recipeImage = recipe.image;
-  const {
-    title,
-    instructions,
-    prepTime,
-    cookTime,
-    servings,
-    category,
-    reviews,
-    tags,
-  } = recipe;
+  const { title, instructions, prepTime, cookTime, servings, category, tags } =
+    recipe;
   const ingredients = recipe?.ingredients as
     | { name: string; quantity: string }[]
     | null;
@@ -80,13 +78,8 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
           <div className="space-y-6">
             <RecipeHeader
               title={title}
-              rating={
-                reviews.reduce(
-                  (acc: any, review: { rating: any }) => acc + review.rating,
-                  0
-                ) / reviews.length || 0
-              }
-              reviews={reviews.length}
+              rating={recipe.avgRating}
+              reviews={recipe.totalReviews}
             />
             <RecipeDetails
               prepTime={prepTime}
@@ -103,8 +96,13 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
           tags={tags}
           recipeId={recipeid}
         />
-        <RecipeReviews recipeId={recipeid} />
-        <div className="mt-12 flex flex-wrap justify-between gap-4">
+        <RecipeReviews
+          recipeId={recipeid}
+          reviewIsExists={!!reviewIsExists}
+          me={session?.user?.id === recipe.authorId}
+        />
+        <Separator className={"mx-auto max-w-5xl w-full mt-3"} />
+        <div className="mt-8 flex flex-wrap justify-between gap-4">
           <RecipeActions
             recipeId={recipeid}
             isSavedForLater={isSavedForLater}

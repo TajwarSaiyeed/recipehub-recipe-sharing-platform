@@ -8,7 +8,7 @@ export async function addRecipe(recipe: RecipeFormData) {
   const userId = session?.user?.id;
 
   if (!userId) {
-    throw Error("Unauthorized");
+    throw new Error("Unauthorized");
   }
 
   const {
