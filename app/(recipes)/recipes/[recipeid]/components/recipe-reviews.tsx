@@ -11,17 +11,18 @@ import AddRecipeReviewForm from "./add-recipe-review-form"
 interface RecipeReviewsProps {
     recipeId: string,
     reviewIsExists: boolean,
-    me: boolean
+    me: boolean,
+    loggedIn: boolean
 }
 
 type ReviewWithUser = Review & {
     user: {
         name: string;
-        avatar: string;
+        image: string;
     };
 };
 
-const RecipeReviews: FC<RecipeReviewsProps> = ({recipeId, reviewIsExists, me}) => {
+const RecipeReviews: FC<RecipeReviewsProps> = ({recipeId, reviewIsExists, me, loggedIn}) => {
     const [reviews, setReviews] = useState<ReviewWithUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [toggle, setToggle] = useState(false);
@@ -65,7 +66,7 @@ const RecipeReviews: FC<RecipeReviewsProps> = ({recipeId, reviewIsExists, me}) =
                             <div key={review.id} className="flex items-start gap-4">
                                 <Avatar className="h-10 w-10 border">
                                     <AvatarImage
-                                        src={review.user?.avatar || "/placeholder-user.jpg"}
+                                        src={review.user?.image || "/placeholder-user.jpg"}
                                         alt={review.user?.name}
                                     />
                                     <AvatarFallback>{review.user?.name?.[0] || "U"}</AvatarFallback>
@@ -88,7 +89,7 @@ const RecipeReviews: FC<RecipeReviewsProps> = ({recipeId, reviewIsExists, me}) =
                 </div>
             </div>
 
-            {!me &&
+            {(!me && loggedIn) &&
                 <>
                     <Separator className={'mx-auto max-w-5xl w-full mt-5'}/>
                     <AddRecipeReviewForm recipeId={recipeId} reviewIsExists={reviewIsExists} setToggle={setToggle}/>

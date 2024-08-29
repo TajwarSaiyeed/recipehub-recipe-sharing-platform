@@ -1,22 +1,24 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Category, Tag } from "@prisma/client";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import FormWrapper from "@/app/(recipes)/add-recipe/components/form-wrapper";
-import FormTextInput from "@/app/(recipes)/add-recipe/components/form-text-input";
-import FormImageInput from "@/app/(recipes)/add-recipe/components/form-image-input";
-import FormTagSelector from "@/app/(recipes)/add-recipe/components/form-tag-selector";
-import FormNumberInput from "@/app/(recipes)/add-recipe/components/form-number-input";
-import FormSelectInput from "@/app/(recipes)/add-recipe/components/form-select-input";
-import FormIngredientsInput from "@/app/(recipes)/add-recipe/components/form-ingredients-input";
-import FormInstructionsInput from "@/app/(recipes)/add-recipe/components/form-instructions-input";
-import supabase from "@/lib/supabase/client";
 import { v4 as uuid } from "uuid";
-import { addRecipe } from "@/app/(recipes)/add-recipe/action";
+import { shareRecipe } from "./action";
+import { useForm } from "react-hook-form";
+import { Category, Tag } from "@prisma/client";
+import supabase from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import React, { FC, useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  FormImageInput,
+  FormIngredientsInput,
+  FormInstructionsInput,
+  FormNumberInput,
+  FormSelectInput,
+  FormTagSelector,
+  FormTextInput,
+  FormWrapper,
+} from "./components";
 
 type RecipeFormProps = {
   categories: Category[];
@@ -108,7 +110,7 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
         process.env.NEXT_PUBLIC_SUPABASE_URL +
         "/storage/v1/object/public/" +
         res.data?.fullPath;
-      const newRecipe = await addRecipe(data);
+      const newRecipe = await shareRecipe(data);
       console.log(newRecipe);
     } catch (err) {
       console.log(err);
@@ -119,7 +121,7 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
     <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid gap-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Add Recipe</h1>
+          <h1 className="text-3xl font-bold">Share a Recipe</h1>
           <p className="text-muted-foreground">
             Fill out the form below to add a new recipe to your collection.
           </p>

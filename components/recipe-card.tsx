@@ -1,17 +1,17 @@
 "use client";
 import Link from "next/link";
-import {toast} from "sonner";
+import { toast } from "sonner";
 import Image from "next/image";
-import {FC, useState} from "react";
-import {useSession} from "next-auth/react";
-import {usePathname} from "next/navigation";
-import {Button} from "@/components/ui/button";
-import {SaveForLater} from "@/actions/save-for-later";
+import { FC, useState } from "react";
+import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { SaveForLater } from "@/actions/save-for-later";
 import CustomTooltip from "@/components/custom-tooltip";
-import {Category, Recipe, Tag, User} from "@prisma/client";
-import {Bookmark, LoaderCircle, StarIcon, TagIcon, User2Icon,} from "lucide-react";
+import { Category, Recipe, Tag, User } from "@prisma/client";
+import { Bookmark, LoaderCircle, StarIcon, TagIcon } from "lucide-react";
 
-type RecipeWithCategoryTags = Recipe & {
+export type RecipeWithCategoryTags = Recipe & {
   category: Category;
   tags: Tag[];
   author: User;
@@ -94,7 +94,13 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
           href={`/users/${recipe.author.id}`}
           className="flex items-center gap-1 text-muted-foreground px-1 py-2 "
         >
-          <User2Icon className="w-5 h-5" />
+          <Image
+            src={recipe.author.image || ""}
+            alt={recipe.author.name || ""}
+            width={16}
+            height={16}
+            className={"rounded-full"}
+          />
           <div className="text-sm text-muted-foreground truncate">
             {recipe.author.name}
           </div>
@@ -102,9 +108,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
         <div className="flex gap-2 flex-wrap items-start justify-between px-1 py-2 bg-background">
           <div className="flex items-center gap-1 text-primary">
             <StarIcon className="w-5 h-5" />
-            <div className="font-medium">
-              {recipe.avgRating.toFixed(1)}
-            </div>
+            <div className="font-medium">{recipe.avgRating.toFixed(1)}</div>
             <div className="text-muted-foreground">/5</div>
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">

@@ -1,3 +1,4 @@
+"use client";
 import { FC } from "react";
 import { Control, useFormContext } from "react-hook-form";
 import { Tag } from "@prisma/client";

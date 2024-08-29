@@ -1,7 +1,7 @@
-import { FC } from "react";
+import {FC} from "react";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import { toast } from "sonner";
+import {redirect} from "next/navigation";
+import {toast} from "sonner";
 import Image from "next/image";
 import RecipeHeader from "./components/recipe-header";
 import RecipeDetails from "./components/recipe-details";
@@ -12,13 +12,15 @@ import RecipeActions from "./components/recipe-actions";
 import getSession from "@/lib/get-session";
 import SimilarRecipes from "@/app/(recipes)/recipes/[recipeid]/components/similar-recipes";
 import RecipeReviews from "@/app/(recipes)/recipes/[recipeid]/components/recipe-reviews";
-import { Separator } from "@/components/ui/separator";
+import {Separator} from "@/components/ui/separator";
 
 interface RecipePageProps {
   params: {
     recipeid: string;
   };
 }
+
+export const revalidate = 60;
 
 const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
   const session = await getSession();
@@ -100,6 +102,7 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
           recipeId={recipeid}
           reviewIsExists={!!reviewIsExists}
           me={session?.user?.id === recipe.authorId}
+          loggedIn={!!session?.user}
         />
         <Separator className={"mx-auto max-w-5xl w-full mt-3"} />
         <div className="mt-8 flex flex-wrap justify-between gap-4">

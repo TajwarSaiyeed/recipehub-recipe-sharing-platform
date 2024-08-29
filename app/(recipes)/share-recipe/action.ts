@@ -1,9 +1,9 @@
 "use server";
 import { auth } from "@/auth";
-import { RecipeFormData } from "@/app/(recipes)/add-recipe/recipe-form";
+import { RecipeFormData } from "./recipe-form";
 import prisma from "@/lib/prisma";
 
-export async function addRecipe(recipe: RecipeFormData) {
+export async function shareRecipe(recipe: RecipeFormData) {
   const session = await auth();
   const userId = session?.user?.id;
 

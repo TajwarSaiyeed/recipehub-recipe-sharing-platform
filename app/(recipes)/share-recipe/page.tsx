@@ -4,9 +4,9 @@ import prisma from "@/lib/prisma";
 import RecipeForm from "./recipe-form";
 import { redirect } from "next/navigation";
 
-const AddRecipePage = async () => {
+const ShareRecipePage = async () => {
   const session = await auth();
-  if (!session) return redirect("/sign-in");
+  if (!session) return redirect("/sign-in?callbackUrl=/share-recipe");
 
   const categories = await prisma.category.findMany();
   const tags = await prisma.tag.findMany();
@@ -14,4 +14,4 @@ const AddRecipePage = async () => {
   return <RecipeForm categories={categories} tags={tags} />;
 };
 
-export default AddRecipePage;
+export default ShareRecipePage;

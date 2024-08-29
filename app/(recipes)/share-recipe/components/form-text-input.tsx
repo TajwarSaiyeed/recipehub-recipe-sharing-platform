@@ -1,3 +1,4 @@
+"use client";
 import { FC } from "react";
 import { Control } from "react-hook-form";
 import { Input } from "@/components/ui/input";
