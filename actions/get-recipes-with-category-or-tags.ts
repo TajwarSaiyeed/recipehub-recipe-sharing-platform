@@ -3,32 +3,39 @@ import prisma from "@/lib/prisma";
 
 export const getRecipesWithCategoryOrTags = async (
   category?: string,
-  tags?: string,
+  tags?: string[],
   page: number = 1,
   limit: number = 50
 ) => {
   const take = limit;
   const skip = (page - 1) * take;
 
-  const filterConditions: any = {};
-
-  if (category) {
-    filterConditions.category = {
-      name: category,
-    };
-  }
-
-  if (tags) {
-    filterConditions.tags = {
-      some: {
-        name: tags,
-      },
-    };
-  }
-
   try {
+    let whereClause = {};
+
+    if (category || (tags && tags.length > 0)) {
+      whereClause = {
+        OR: [
+          {
+            category: {
+              name: category,
+            },
+          },
+          {
+            tags: {
+              some: {
+                name: {
+                  in: tags ? tags : [],
+                },
+              },
+            },
+          },
+        ],
+      };
+    }
+
     const recipes = await prisma.recipe.findMany({
-      where: filterConditions,
+      where: whereClause,
       include: {
         category: true,
         tags: true,
@@ -37,17 +44,15 @@ export const getRecipesWithCategoryOrTags = async (
       },
       skip,
       take,
-      orderBy: {
-        avgRating: "desc",
-      },
+      orderBy: category || tags ? { avgRating: "desc" } : { createdAt: "desc" }, // Randomize order when no filter is applied
     });
 
     const totalCount = await prisma.recipe.count({
-      where: filterConditions,
+      where: whereClause,
     });
 
     setTimeout(() => {
-      console.log("Fetching recipes...");
+      console.log("Fetching recipes...", new Date());
     }, 1000);
 
     return {

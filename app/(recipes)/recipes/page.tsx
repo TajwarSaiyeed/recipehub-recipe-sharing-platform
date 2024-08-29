@@ -1,25 +1,21 @@
 import prisma from "@/lib/prisma";
-import RecipeCard from "@/components/recipe-card";
+import FilterByCategoryTags from "./components/filter-by-category-tags";
 
-const Page =async () => {
-    const recipes = await prisma.recipe.findMany({
-        include: {
-            category: true,
-            tags: true,
-            author: true,
-            favUsers: true,
-            reviews: true,
-        },
-    });
-    return (
-        <>
-            <section className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-                {recipes.map((recipe) => (
-                    <RecipeCard key={recipe.id} recipe={recipe}/>
-                ))}
-            </section>
-        </>
-    );
+const Page = async () => {
+  const categories = await prisma.category.findMany();
+  const tags = await prisma.tag.findMany();
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Recipes</h1>
+        <p className="text-muted-foreground">
+          Discover a world of delicious recipes shared by our community.
+        </p>
+      </div>
+      <FilterByCategoryTags categories={categories} tags={tags} />
+    </div>
+  );
 };
 
 export default Page;

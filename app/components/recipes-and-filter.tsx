@@ -3,7 +3,7 @@
 import { Category } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
 import FilterRecipe from "@/components/filter-recipe";
-import RecipeCardSkeleton from "@/components/recipe-card-skeleton"; // Adjust the import path as needed
+import RecipeCardSkeleton from "@/components/recipe-card-skeleton";
 import RecipeCard, { RecipeWithCategoryTags } from "@/components/recipe-card";
 import { getRecipesWithCategoryOrTags } from "@/actions/get-recipes-with-category-or-tags";
 
