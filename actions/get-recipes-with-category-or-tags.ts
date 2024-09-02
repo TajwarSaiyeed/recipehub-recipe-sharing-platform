@@ -16,20 +16,18 @@ export const getRecipesWithCategoryOrTags = async (
     if (category || (tags && tags.length > 0)) {
       whereClause = {
         OR: [
-          {
-            category: {
-              name: category,
-            },
-          },
-          {
-            tags: {
-              some: {
-                name: {
-                  in: tags ? tags : [],
+          category ? { category: { name: category } } : {},
+          tags?.length
+            ? {
+                tags: {
+                  some: {
+                    name: {
+                      in: tags,
+                    },
+                  },
                 },
-              },
-            },
-          },
+              }
+            : {},
         ],
       };
     }
@@ -44,16 +42,12 @@ export const getRecipesWithCategoryOrTags = async (
       },
       skip,
       take,
-      orderBy: category || tags ? { avgRating: "desc" } : { createdAt: "desc" }, // Randomize order when no filter is applied
+      orderBy: category || tags ? { avgRating: "desc" } : { createdAt: "desc" },
     });
 
     const totalCount = await prisma.recipe.count({
       where: whereClause,
     });
-
-    setTimeout(() => {
-      console.log("Fetching recipes...", new Date());
-    }, 1000);
 
     return {
       recipes,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Category, Tag } from "@prisma/client";
 import { Button } from "@/components/ui/button";
@@ -7,71 +8,91 @@ import React, { FC, useEffect, useState } from "react";
 import { FilterIcon, SearchIcon, TagIcon } from "lucide-react";
 import RecipeCardSkeleton from "@/components/recipe-card-skeleton";
 import RecipeCard, { RecipeWithCategoryTags } from "@/components/recipe-card";
-import { getRecipesWithCategoryOrTags } from "@/actions/get-recipes-with-category-or-tags";
 
 interface FilterByCategoryTags {
   categories: Category[];
   tags: Tag[];
+  recipes: RecipeWithCategoryTags[];
+  category?: string;
+  tagsArray?: string[];
 }
 
 const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
   categories,
   tags,
+  recipes,
+  category,
+  tagsArray = [],
 }) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [showCategories, setShowCategories] = useState(false);
   const [showTags, setShowTags] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    undefined
-  );
-  const [selectedTags, setSelectedTags] = useState<string[] | undefined>(
-    undefined
-  );
-  const [recipes, setRecipes] = useState<RecipeWithCategoryTags[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const handleCategoryClick = () => {
-    setShowCategories((prev) => !prev);
-    setShowTags(false);
+  const handleCategoryClick = (selectedCategory: string | undefined) => {
+    const newParams = new URLSearchParams(window.location.search);
+    if (selectedCategory) {
+      newParams.set("category", selectedCategory);
+    } else {
+      newParams.delete("category");
+    }
+    router.push(`?${newParams.toString()}`);
   };
-  const handleTagClick = () => {
-    setShowTags((prev) => !prev);
-    setShowCategories(false);
+
+  const handleTagClick = (selectedTag: string) => {
+    const newParams = new URLSearchParams(window.location.search);
+    let currentTags = tagsArray ? [...tagsArray] : [];
+
+    if (currentTags.includes(selectedTag)) {
+      currentTags = currentTags.filter((tag) => tag !== selectedTag);
+    } else {
+      currentTags = Array.from(new Set([...currentTags, selectedTag])); // Ensure uniqueness
+    }
+
+    if (currentTags.length > 0) {
+      newParams.set("tags", currentTags.join(","));
+    } else {
+      newParams.delete("tags");
+    }
+    router.push(`?${newParams.toString()}`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      setIsLoading(true);
-      try {
-        const { recipes } = await getRecipesWithCategoryOrTags(
-          selectedCategory,
-          selectedTags
-        );
-        return recipes;
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const toggleCategoryVisibility = () => {
+    setShowCategories((prev) => !prev);
+    setShowTags(false);
+  };
 
-    fetchRecipes().then((recipes) => setRecipes(recipes || []));
-  }, [selectedCategory, selectedTags]);
+  const toggleTagVisibility = () => {
+    setShowTags((prev) => !prev);
+    setShowCategories(false);
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 200);
+  }, [category, tagsArray]);
 
   return (
     <>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={handleCategoryClick}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleCategoryVisibility}
+          >
             <FilterIcon className="w-4 h-4 mr-2" />
             Categories
           </Button>
 
-          <Button variant="outline" size="sm" onClick={handleTagClick}>
+          <Button variant="outline" size="sm" onClick={toggleTagVisibility}>
             <TagIcon className="w-4 h-4 mr-2" />
             Tags
           </Button>
@@ -90,21 +111,19 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
 
       {showCategories && (
         <div className="p-5 w-full flex flex-wrap gap-2 z-10">
-          {categories.map((category) => (
+          {categories.map((categoryItem) => (
             <Button
-              key={category.id}
+              key={categoryItem.id}
               onClick={() => {
                 setShowCategories(false);
-                setSelectedCategory(
-                  selectedCategory === category.name ? undefined : category.name
+                handleCategoryClick(
+                  category === categoryItem.name ? undefined : categoryItem.name
                 );
                 setShowTags(false);
               }}
-              variant={
-                category.name === selectedCategory ? "default" : "outline"
-              }
+              variant={categoryItem.name === category ? "default" : "outline"}
             >
-              {category.name}
+              {categoryItem.name}
             </Button>
           ))}
         </div>
@@ -118,11 +137,9 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
               onClick={() => {
                 setShowTags(false);
                 setShowCategories(false);
-                selectedTags?.includes(tag.name)
-                  ? setSelectedTags(selectedTags.filter((t) => t !== tag.name))
-                  : setSelectedTags([...(selectedTags || []), tag.name]);
+                handleTagClick(tag.name);
               }}
-              variant={selectedTags?.includes(tag.name) ? "default" : "outline"}
+              variant={tagsArray.includes(tag.name) ? "default" : "outline"}
             >
               {tag.name}
             </Button>
@@ -136,7 +153,7 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
             <RecipeCardSkeleton key={index} />
           ))}
         </section>
-      ) : recipes.length == 0 ? (
+      ) : recipes.length === 0 ? (
         <div className="flex items-center justify-center">
           <p className="text-lg text-muted-foreground">No recipes found.</p>
         </div>

@@ -1,9 +1,24 @@
 import prisma from "@/lib/prisma";
 import FilterByCategoryTags from "./components/filter-by-category-tags";
+import { getRecipesWithCategoryOrTags } from "@/actions/get-recipes-with-category-or-tags";
 
-const Page = async () => {
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: { category?: string; tags?: string[] };
+}) => {
   const categories = await prisma.category.findMany();
   const tags = await prisma.tag.findMany();
+
+  const category = searchParams.category;
+  const tagsArray = searchParams.tags
+    ? Array.isArray(searchParams.tags)
+      ? searchParams.tags
+      : [searchParams.tags]
+    : [];
+
+  const { recipes, totalCount, page, totalPages } =
+    await getRecipesWithCategoryOrTags(category, tagsArray);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -13,7 +28,13 @@ const Page = async () => {
           Discover a world of delicious recipes shared by our community.
         </p>
       </div>
-      <FilterByCategoryTags categories={categories} tags={tags} />
+      <FilterByCategoryTags
+        categories={categories}
+        tags={tags}
+        recipes={recipes}
+        category={category}
+        tagsArray={tagsArray}
+      />
     </div>
   );
 };
