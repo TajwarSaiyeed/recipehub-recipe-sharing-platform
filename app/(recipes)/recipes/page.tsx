@@ -5,20 +5,18 @@ import { getRecipesWithCategoryOrTags } from "@/actions/get-recipes-with-categor
 const Page = async ({
   searchParams,
 }: {
-  searchParams: { category?: string; tags?: string[] };
+  searchParams: { search: string; category?: string; tags?: string };
 }) => {
   const categories = await prisma.category.findMany();
   const tags = await prisma.tag.findMany();
 
   const category = searchParams.category;
-  const tagsArray = searchParams.tags
-    ? Array.isArray(searchParams.tags)
-      ? searchParams.tags
-      : [searchParams.tags]
-    : [];
 
+  const tagsArray = searchParams.tags ? searchParams.tags.split(",") : [];
+
+  let query = searchParams.search;
   const { recipes, totalCount, page, totalPages } =
-    await getRecipesWithCategoryOrTags(category, tagsArray);
+    await getRecipesWithCategoryOrTags(query, category, tagsArray);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

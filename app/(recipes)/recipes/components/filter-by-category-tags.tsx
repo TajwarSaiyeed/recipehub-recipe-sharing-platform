@@ -1,12 +1,14 @@
 "use client";
 
+import qs from "query-string";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Category, Tag } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import React, { FC, useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { FilterIcon, SearchIcon, TagIcon } from "lucide-react";
 import RecipeCardSkeleton from "@/components/recipe-card-skeleton";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import RecipeCard, { RecipeWithCategoryTags } from "@/components/recipe-card";
 
 interface FilterByCategoryTags {
@@ -25,42 +27,74 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
   tagsArray = [],
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedValue = useDebounce(searchQuery);
   const [showCategories, setShowCategories] = useState(false);
   const [showTags, setShowTags] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    category
+  );
+  const [selectedTags, setSelectedTags] = useState<string[]>(tagsArray);
   const router = useRouter();
 
+  const uniqueTagsArray = useMemo(() => {
+    return Array.from(new Set(selectedTags));
+  }, [selectedTags]);
+
+  const updateFiltersAndNavigate = useCallback(() => {
+    const queryParams = {
+      category: selectedCategory || undefined,
+      tags: uniqueTagsArray.length > 0 ? uniqueTagsArray.join(",") : undefined,
+      search: debouncedValue || undefined,
+    };
+
+    const url = qs.stringifyUrl(
+      {
+        url: window.location.pathname,
+        query: queryParams,
+      },
+      {
+        skipNull: true,
+        skipEmptyString: true,
+      }
+    );
+
+    router.push(url);
+  }, [selectedCategory, uniqueTagsArray, debouncedValue, router]);
+
   const handleCategoryClick = (selectedCategory: string | undefined) => {
-    const newParams = new URLSearchParams(window.location.search);
-    if (selectedCategory) {
-      newParams.set("category", selectedCategory);
-    } else {
-      newParams.delete("category");
-    }
-    router.push(`?${newParams.toString()}`);
+    setSelectedCategory(selectedCategory);
   };
 
   const handleTagClick = (selectedTag: string) => {
-    const newParams = new URLSearchParams(window.location.search);
-    let currentTags = tagsArray ? [...tagsArray] : [];
-
-    if (currentTags.includes(selectedTag)) {
-      currentTags = currentTags.filter((tag) => tag !== selectedTag);
-    } else {
-      currentTags = Array.from(new Set([...currentTags, selectedTag])); // Ensure uniqueness
-    }
-
-    if (currentTags.length > 0) {
-      newParams.set("tags", currentTags.join(","));
-    } else {
-      newParams.delete("tags");
-    }
-    router.push(`?${newParams.toString()}`);
+    setSelectedTags((prevTags) => {
+      if (prevTags.includes(selectedTag)) {
+        return prevTags.filter((tag) => tag !== selectedTag);
+      } else {
+        return Array.from(new Set([...prevTags, selectedTag]));
+      }
+    });
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
+
+  useEffect(() => {
+    updateFiltersAndNavigate();
+  }, [
+    selectedCategory,
+    uniqueTagsArray,
+    debouncedValue,
+    updateFiltersAndNavigate,
+  ]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 200);
+  }, [selectedCategory, uniqueTagsArray]);
 
   const toggleCategoryVisibility = () => {
     setShowCategories((prev) => !prev);
@@ -71,13 +105,6 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
     setShowTags((prev) => !prev);
     setShowCategories(false);
   };
-
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 200);
-  }, [category, tagsArray]);
 
   return (
     <>
@@ -117,11 +144,15 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
               onClick={() => {
                 setShowCategories(false);
                 handleCategoryClick(
-                  category === categoryItem.name ? undefined : categoryItem.name
+                  selectedCategory === categoryItem.name
+                    ? undefined
+                    : categoryItem.name
                 );
                 setShowTags(false);
               }}
-              variant={categoryItem.name === category ? "default" : "outline"}
+              variant={
+                categoryItem.name === selectedCategory ? "default" : "outline"
+              }
             >
               {categoryItem.name}
             </Button>
@@ -139,7 +170,9 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
                 setShowCategories(false);
                 handleTagClick(tag.name);
               }}
-              variant={tagsArray.includes(tag.name) ? "default" : "outline"}
+              variant={
+                uniqueTagsArray.includes(tag.name) ? "default" : "outline"
+              }
             >
               {tag.name}
             </Button>

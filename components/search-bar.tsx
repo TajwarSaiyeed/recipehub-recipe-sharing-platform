@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import qs from "query-string";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,10 @@ import {
   Select,
   SelectContent,
   SelectGroup,
+  SelectItem,
   SelectLabel,
   SelectTrigger,
   SelectValue,
-  SelectItem,
 } from "@/components/ui/select";
 import { usePathname, useRouter } from "next/navigation";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -24,7 +24,7 @@ type SearchBarProps = {
   coursesCategories?: string[];
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({
+const SearchBar: FC<SearchBarProps> = ({
   placeholder,
   queryKey,
   additionalParams = {},

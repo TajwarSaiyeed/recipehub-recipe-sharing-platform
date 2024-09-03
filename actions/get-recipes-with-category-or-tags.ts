@@ -2,6 +2,7 @@
 import prisma from "@/lib/prisma";
 
 export const getRecipesWithCategoryOrTags = async (
+  query?: string,
   category?: string,
   tags?: string[],
   page: number = 1,
@@ -11,9 +12,9 @@ export const getRecipesWithCategoryOrTags = async (
   const skip = (page - 1) * take;
 
   try {
-    let whereClause = {};
+    let whereClause: any = {};
 
-    if (category || (tags && tags.length > 0)) {
+    if (category || (tags && tags.length > 0) || query) {
       whereClause = {
         OR: [
           category ? { category: { name: category } } : {},
@@ -26,6 +27,14 @@ export const getRecipesWithCategoryOrTags = async (
                     },
                   },
                 },
+              }
+            : {},
+          query
+            ? {
+                OR: [
+                  { title: { contains: query, mode: "insensitive" } },
+                  { description: { contains: query, mode: "insensitive" } },
+                ],
               }
             : {},
         ],
@@ -42,7 +51,10 @@ export const getRecipesWithCategoryOrTags = async (
       },
       skip,
       take,
-      orderBy: category || tags ? { avgRating: "desc" } : { createdAt: "desc" },
+      orderBy:
+        category || tags || query
+          ? { avgRating: "desc" }
+          : { createdAt: "desc" },
     });
 
     const totalCount = await prisma.recipe.count({
