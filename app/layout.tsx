@@ -7,6 +7,7 @@ import TopLoader from "@/components/top-loader";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
+import Navbar from "@/components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +36,7 @@ export default function RootLayout({
         )}
       >
         <SessionProvider>
+          <Navbar />
           {children}
           <Toaster richColors />
           <TopLoader />

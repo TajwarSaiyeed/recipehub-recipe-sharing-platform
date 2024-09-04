@@ -9,22 +9,22 @@ import { getRecipesWithCategoryOrTags } from "@/actions/get-recipes-with-categor
 
 interface RecipesAndFilterProps {
   categories: Category[];
+  query?: string;
 }
 
-const RecipesAndFilter: FC<RecipesAndFilterProps> = ({ categories }) => {
+const RecipesAndFilter: FC<RecipesAndFilterProps> = ({ categories, query }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
     undefined
   );
   const [recipes, setRecipes] = useState<RecipeWithCategoryTags[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  console.log({ selectedCategory, recipes, isLoading });
-
   useEffect(() => {
     const fetchRecipes = async () => {
       setIsLoading(true);
       try {
         const { recipes } = await getRecipesWithCategoryOrTags(
+          query,
           selectedCategory
         );
         return recipes;
@@ -36,7 +36,7 @@ const RecipesAndFilter: FC<RecipesAndFilterProps> = ({ categories }) => {
     };
 
     fetchRecipes().then((recipes) => setRecipes(recipes || []));
-  }, [selectedCategory]);
+  }, [query, selectedCategory]);
 
   const handleCategoryChange = (category: string) => {
     if (category === selectedCategory) {
