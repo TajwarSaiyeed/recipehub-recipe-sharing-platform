@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
 import { FilterIcon, SearchIcon, TagIcon } from "lucide-react";
 import RecipeCardSkeleton from "@/components/recipe-card-skeleton";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import RecipeCard, { RecipeWithCategoryTags } from "@/components/recipe-card";
 
 interface FilterByCategoryTags {
@@ -28,6 +35,7 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedValue = useDebounce(searchQuery);
+  const [secondRender, setSecondRender] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const [showTags, setShowTags] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +43,8 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
     category
   );
   const [selectedTags, setSelectedTags] = useState<string[]>(tagsArray);
+  const firstRenderRef = useRef(true);
+
   const router = useRouter();
 
   const uniqueTagsArray = useMemo(() => {
@@ -81,12 +91,26 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
   };
 
   useEffect(() => {
-    updateFiltersAndNavigate();
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
+      return;
+    }
+
+    if (
+      selectedCategory ||
+      uniqueTagsArray.length > 0 ||
+      debouncedValue ||
+      secondRender
+    ) {
+      setSecondRender(true);
+      updateFiltersAndNavigate();
+    }
   }, [
+    updateFiltersAndNavigate,
     selectedCategory,
     uniqueTagsArray,
     debouncedValue,
-    updateFiltersAndNavigate,
+    secondRender,
   ]);
 
   useEffect(() => {

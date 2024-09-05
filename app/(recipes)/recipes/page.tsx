@@ -11,10 +11,9 @@ const Page = async ({
   const tags = await prisma.tag.findMany();
 
   const category = searchParams.category;
-
   const tagsArray = searchParams.tags ? searchParams.tags.split(",") : [];
 
-  let query = searchParams.search;
+  let query = searchParams.search || "";
   const { recipes, totalCount, page, totalPages } =
     await getRecipesWithCategoryOrTags(query, category, tagsArray);
 

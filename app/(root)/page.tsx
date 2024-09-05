@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Hero from "@/components/hero";
-import RecipesAndFilter from "@/app/components/recipes-and-filter";
+import RecipesAndFilter from "@/app/(root)/components/recipes-and-filter";
 
 export const revalidate = 1;
 

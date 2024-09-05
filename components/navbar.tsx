@@ -20,23 +20,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import React, { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedValue = useDebounce(searchQuery);
   const router = useRouter();
-  const pathName = usePathname();
 
   useEffect(() => {
+    if (!debouncedValue) {
+      return;
+    }
     const queryParams = {
       search: debouncedValue,
     };
 
     const url = qs.stringifyUrl(
       {
-        url: pathName,
+        url: "/recipes",
         query: queryParams,
       },
       {
@@ -45,7 +47,7 @@ const Navbar = () => {
       }
     );
     router.push(url);
-  }, [router, debouncedValue, pathName]);
+  }, [router, debouncedValue]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
