@@ -110,8 +110,7 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
         process.env.NEXT_PUBLIC_SUPABASE_URL +
         "/storage/v1/object/public/" +
         res.data?.fullPath;
-      const newRecipe = await shareRecipe(data);
-      console.log(newRecipe);
+      await shareRecipe(data);
     } catch (err) {
       console.log(err);
     }

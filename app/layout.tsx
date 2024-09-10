@@ -23,14 +23,18 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased mx-auto max-w-7xl px-5 relative",
+          "min-h-screen bg-background font-sans antialiased",
           inter.className
         )}
       >
         <SessionProvider>
-          {children}
-          <Toaster richColors />
-          <TopLoader />
+          <main className={"relative flex flex-col min-h-screen"}>
+            <div className={"flex-grow flex-1"}>
+              {children}
+              <Toaster richColors />
+              <TopLoader />
+            </div>
+          </main>
         </SessionProvider>
       </body>
     </html>

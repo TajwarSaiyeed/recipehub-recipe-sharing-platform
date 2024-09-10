@@ -3,12 +3,13 @@ import { ReactNode } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import MaxWidthWrapper from "@/components/max-width-wrapper";
 
 const MyLayout = ({ children }: { children: ReactNode }) => {
   const pathName = usePathname();
   const path = pathName.split("/").pop();
   return (
-    <section className={"my-2 p-2"}>
+    <MaxWidthWrapper>
       <Tabs defaultValue={path} className="max-w-[400px]">
         <TabsList>
           <Link href={"/me/profile"}>
@@ -23,7 +24,7 @@ const MyLayout = ({ children }: { children: ReactNode }) => {
         </TabsList>
       </Tabs>
       {children}
-    </section>
+    </MaxWidthWrapper>
   );
 };
 

@@ -54,7 +54,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
         <div className="relative bg-zinc-100 aspect-square w-full overflow-hidden rounded-xl">
           <Link href={`/recipes/${recipe.id}`}>
             <Image
-              src={recipe.image || ""}
+              src={`${recipe.image || ""}?${new Date().getTime()}`}
               alt={recipe.title}
               fill
               loading={"lazy"}
@@ -95,7 +95,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
           className="flex items-center gap-1 text-muted-foreground px-1 py-2 "
         >
           <Image
-            src={recipe.author.image || ""}
+            src={`${recipe.author.image || ""}?${new Date().getTime()}`}
             alt={recipe.author.name || ""}
             width={16}
             height={16}

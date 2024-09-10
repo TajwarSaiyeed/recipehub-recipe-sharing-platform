@@ -2,6 +2,7 @@ import Users from "./users";
 import { auth } from "@/auth";
 import { users } from "./action";
 import { redirect } from "next/navigation";
+import MaxWidthWrapper from "@/components/max-width-wrapper";
 
 export const revalidate = 1;
 
@@ -15,7 +16,11 @@ const UsersPage = async ({ searchParams }: { searchParams?: string }) => {
   const query = new URLSearchParams(searchParams).get("query") || "";
   const u = await users(+page, +limit, query);
 
-  return <Users users={u} />;
+  return (
+    <MaxWidthWrapper>
+      <Users users={u} />;
+    </MaxWidthWrapper>
+  );
 };
 
 export default UsersPage;
