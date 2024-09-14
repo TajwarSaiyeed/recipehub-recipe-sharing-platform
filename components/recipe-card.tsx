@@ -4,12 +4,12 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { FC, useState } from "react";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { usePathname, useRouter } from "next/navigation";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { SaveForLater } from "@/actions/save-for-later";
 import CustomTooltip from "@/components/custom-tooltip";
 import { Category, Recipe, Tag, User } from "@prisma/client";
-import { Bookmark, LoaderCircle, StarIcon, TagIcon } from "lucide-react";
+import { Bookmark, LoaderCircle, Pen, StarIcon, TagIcon } from "lucide-react";
 
 export type RecipeWithCategoryTags = Recipe & {
   category: Category;
@@ -26,6 +26,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
   const [loading, setLoading] = useState(false);
   const session = useSession();
   const pathName = usePathname();
+  const router = useRouter();
 
   const isSavedForLater = recipe.favUsers.some(
     (user) => user.id === session.data?.user?.id
@@ -63,20 +64,35 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
               }
             />
           </Link>
-          <CustomTooltip content={"Save for later"}>
-            <Button
-              onClick={handleSaveForLater}
-              className={"rounded-full w-6 h-6 absolute right-2 top-2"}
-              variant={isSavedForLater ? "default" : "outline"}
-              size={"icon"}
-            >
-              {loading ? (
-                <LoaderCircle className={"w-4 h-4 animate-spin"} />
-              ) : (
-                <Bookmark className={"w-4 h-4"} />
-              )}
-            </Button>
-          </CustomTooltip>
+          {pathName != "/me/recipes" ? (
+            <CustomTooltip content={"Save for later"}>
+              <Button
+                onClick={handleSaveForLater}
+                className={"rounded-full w-6 h-6 absolute right-2 top-2"}
+                variant={isSavedForLater ? "default" : "outline"}
+                size={"icon"}
+              >
+                {loading ? (
+                  <LoaderCircle className={"w-4 h-4 animate-spin"} />
+                ) : (
+                  <Bookmark className={"w-4 h-4"} />
+                )}
+              </Button>
+            </CustomTooltip>
+          ) : (
+            <CustomTooltip content={"Update the recipe"}>
+              <Link
+                href={"/me/update-recipe/" + recipe.id}
+                className={buttonVariants({
+                  className: "rounded-full w-6 h-6 absolute right-2 top-2",
+                  variant: "default",
+                  size: "icon",
+                })}
+              >
+                <Pen className={"w-4 h-4"} />
+              </Link>
+            </CustomTooltip>
+          )}
         </div>
         <div className="p-2">
           <Link href={`/recipes/${recipe.id}`}>

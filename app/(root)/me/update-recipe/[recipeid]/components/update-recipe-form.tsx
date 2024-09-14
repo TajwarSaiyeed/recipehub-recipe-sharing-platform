@@ -1,14 +1,11 @@
 "use client";
 import * as z from "zod";
 import { toast } from "sonner";
-import { v4 as uuid } from "uuid";
-import { shareRecipe } from "./action";
 import { useForm } from "react-hook-form";
-import supabase from "@/lib/supabase/client";
-import { Category, Tag } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { FC, useEffect, useState } from "react";
+import { Category, Recipe, Tag, User } from "@prisma/client";
 import {
   FormImageInput,
   FormIngredientsInput,
@@ -19,13 +16,21 @@ import {
   FormTextInput,
   FormWrapper,
 } from "@/components/recipe-form-components";
+import supabase from "@/lib/supabase/client";
+import { UpdateRecipe } from "../action";
 
-type RecipeFormProps = {
+type UpdateRecipeFormProps = {
   categories: Category[];
   tags: Tag[];
+  recipe: Recipe & {
+    category: Category;
+    tags: Tag[];
+    author: User;
+  };
 };
 
-export const recipeFormSchema = z.object({
+export const updateRecipeFormSchema = z.object({
+  id: z.string(),
   title: z.string().min(1, "Title is required").max(100, "Title is too long"),
   description: z.string().min(1, "Description is required"),
   ingredients: z
@@ -47,25 +52,38 @@ export const recipeFormSchema = z.object({
   image: z.any().optional(),
 });
 
-export type RecipeFormData = z.infer<typeof recipeFormSchema>;
+export type UpdateRecipeFormData = z.infer<typeof updateRecipeFormSchema>;
 
-const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
+const UpdateRecipeForm: FC<UpdateRecipeFormProps> = ({
+  categories,
+  tags,
+  recipe,
+}) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | string | null>(
+    recipe.image
+  );
+  const ingredients = Array.isArray(recipe.ingredients)
+    ? recipe.ingredients.map((ingredient: any) => ({
+        name: ingredient?.name || "",
+        quantity: ingredient?.quantity || "",
+      }))
+    : [{ name: "", quantity: "" }];
 
-  const form = useForm<RecipeFormData>({
-    resolver: zodResolver(recipeFormSchema),
+  const form = useForm<UpdateRecipeFormData>({
+    resolver: zodResolver(updateRecipeFormSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      ingredients: [{ name: "", quantity: "" }],
-      instructions: [""],
-      prepTime: 0,
-      cookTime: 0,
-      servings: 0,
-      categoryId: "",
-      tags: [],
-      image: null,
+      id: recipe.id,
+      title: recipe.title,
+      description: recipe?.description || "",
+      ingredients: ingredients,
+      instructions: recipe.instructions,
+      prepTime: recipe.prepTime || 0,
+      cookTime: recipe.cookTime || 0,
+      servings: recipe.servings || 0,
+      categoryId: recipe.categoryId || "",
+      tags: recipe.tags.map((tag: Tag) => tag.name) || [],
+      image: recipe.image || null,
     },
   });
 
@@ -92,7 +110,7 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
     setValue("image", null);
   };
 
-  async function onSubmit(data: RecipeFormData) {
+  async function onSubmit(data: UpdateRecipeFormData) {
     try {
       if (selectedTags.length === 0) {
         toast.error("Select at least one tag", { duration: 5000 });
@@ -103,14 +121,17 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
         toast.error("Select an image", { duration: 5000 });
         return;
       }
-      const res = await supabase.storage
-        .from("images")
-        .upload(`recipe-images/${uuid()}`, imageFile);
-      data.image =
-        process.env.NEXT_PUBLIC_SUPABASE_URL +
-        "/storage/v1/object/public/" +
-        res.data?.fullPath;
-      await shareRecipe(data);
+
+      if (recipe?.image && recipe.image !== imageFile) {
+        const isRecipe = recipe.image.split("/").includes("recipe-images");
+        const url = recipe.image.split("/").pop();
+        await supabase.storage
+          .from("images")
+          .update(`recipe-images/${url}`, imageFile);
+      }
+
+      await UpdateRecipe(data, recipe.authorId);
+      toast.success("Recipe updated successfully", { duration: 5000 });
     } catch (err) {
       console.log(err);
     }
@@ -120,9 +141,9 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
     <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid gap-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Share a Recipe</h1>
+          <h1 className="text-3xl font-bold">Update Recipe</h1>
           <p className="text-muted-foreground">
-            Fill out the form below to add a new recipe to your collection.
+            Update your recipe details here to share with the world.
           </p>
         </div>
         <FormWrapper form={form} onSubmit={handleSubmit(onSubmit)}>
@@ -180,11 +201,13 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
             handleFileChange={handleFileChange}
             removeImage={removeImage}
           />
-          <Button type="submit">Add Recipe</Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            Update Recipe
+          </Button>
         </FormWrapper>
       </div>
     </div>
   );
 };
 
-export default RecipeForm;
+export default UpdateRecipeForm;

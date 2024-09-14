@@ -1,18 +1,18 @@
-import {FC} from "react";
-import prisma from "@/lib/prisma";
-import {redirect} from "next/navigation";
-import {toast} from "sonner";
+import { FC } from "react";
 import Image from "next/image";
-import RecipeHeader from "./components/recipe-header";
-import RecipeDetails from "./components/recipe-details";
+import { toast } from "sonner";
+import prisma from "@/lib/prisma";
+import getSession from "@/lib/get-session";
+import { redirect } from "next/navigation";
+import RecipeTags from "./components/recipe-tags";
 import Ingredients from "./components/ingredients";
 import Instructions from "./components/instructions";
-import RecipeTags from "./components/recipe-tags";
+import RecipeHeader from "./components/recipe-header";
+import { Separator } from "@/components/ui/separator";
+import RecipeDetails from "./components/recipe-details";
 import RecipeActions from "./components/recipe-actions";
-import getSession from "@/lib/get-session";
-import SimilarRecipes from "@/app/(recipes)/recipes/[recipeid]/components/similar-recipes";
-import RecipeReviews from "@/app/(recipes)/recipes/[recipeid]/components/recipe-reviews";
-import {Separator} from "@/components/ui/separator";
+import RecipeReviews from "./components/recipe-reviews";
+import SimilarRecipes from "./components/similar-recipes";
 
 interface RecipePageProps {
   params: {
@@ -69,7 +69,7 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
         <div className="grid gap-8 md:grid-cols-2">
           <div>
             <Image
-              src={recipeImage || "/placeholder.svg"}
+              src={`${recipe.image || ""}?${new Date().getTime()}`}
               width={800}
               height={600}
               alt="Recipe Image"

@@ -73,7 +73,7 @@ const SimilarRecipes: FC<SimilarRecipesProps> = ({
                 prefetch={false}
               >
                 <Image
-                  src={recipe.image || "/placeholder.svg"}
+                  src={`${recipe.image || ""}?${new Date().getTime()}`}
                   width={400}
                   height={300}
                   alt={recipe.title}
