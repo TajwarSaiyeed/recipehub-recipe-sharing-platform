@@ -6,7 +6,7 @@ export const getRecipesWithCategoryOrTags = async (
   category?: string,
   tags?: string[],
   page: number = 1,
-  limit: number = 50
+  limit: number = 12
 ) => {
   const take = limit;
   const skip = (page - 1) * take;
@@ -54,7 +54,7 @@ export const getRecipesWithCategoryOrTags = async (
       orderBy:
         category || tags || query
           ? { avgRating: "desc" }
-          : { createdAt: "desc" },
+          : { createdAt: "asc" },
     });
 
     const totalCount = await prisma.recipe.count({

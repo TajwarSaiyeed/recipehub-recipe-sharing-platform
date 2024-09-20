@@ -18,7 +18,6 @@ export async function addReview({
   try {
     const session = await auth();
     if (!session || !session.user) {
-      console.error("No session or user found. Redirecting to login.");
       throw new Error("Unauthorized: User is not logged in.");
     }
     const userId = session.user.id;

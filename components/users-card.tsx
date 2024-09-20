@@ -1,16 +1,39 @@
 "use client";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { EyeIcon, FilePenIcon, StarIcon } from "lucide-react";
+import { EyeIcon, StarIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { dateFormatted } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { calculateAverageRating, dateFormatted } from "@/lib/utils";
 import { FC } from "react";
-import { UserCardProps } from "./types";
+import { UserCardProps } from "@/types/types";
 import Link from "next/link";
+
+const renderStars = (rating: number) => {
+  const totalStars = 5;
+  const fullStars = Math.floor(rating);
+  const emptyStars = totalStars - fullStars;
+  const stars = [];
+
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(<StarIcon key={`full-${i}`} className="w-4 h-4 fill-current" />);
+  }
+
+  for (let i = 0; i < emptyStars; i++) {
+    stars.push(
+      <StarIcon
+        key={`empty-${i}`}
+        className="w-4 h-4 fill-muted stroke-muted-foreground"
+      />
+    );
+  }
+
+  return stars;
+};
 
 const UsersCard: FC<UserCardProps> = ({ user }) => {
   const date = new Date(user.createdAt);
+  const rating = calculateAverageRating(user.recipes);
   return (
     <Card className="p-6">
       <div className="flex items-center gap-4">
@@ -27,11 +50,7 @@ const UsersCard: FC<UserCardProps> = ({ user }) => {
           <div className="font-medium">{user.name}</div>
           <p className="text-sm text-muted-foreground truncate">{user.email}</p>
           <div className="flex items-center gap-1 text-sm text-primary">
-            <StarIcon className="w-4 h-4" />
-            <StarIcon className="w-4 h-4" />
-            <StarIcon className="w-4 h-4" />
-            <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-            <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
+            {renderStars(rating)} {rating.toFixed(1)}
           </div>
         </div>
       </div>
@@ -58,10 +77,6 @@ const UsersCard: FC<UserCardProps> = ({ user }) => {
           <EyeIcon className="mr-2 h-4 w-4" />
           View
         </Link>
-        <Button variant="outline" size="sm">
-          <FilePenIcon className="mr-2 h-4 w-4" />
-          Edit
-        </Button>
       </div>
     </Card>
   );

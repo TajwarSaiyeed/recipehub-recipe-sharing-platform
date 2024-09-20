@@ -19,7 +19,7 @@ export const calculateAverageRating = (recipes: any[]) => {
   let ratingCount = 0;
 
   recipes?.forEach((recipe) => {
-    recipe.reviews.forEach((review: any) => {
+    recipe?.reviews?.forEach((review: any) => {
       totalRatings += review.rating;
       ratingCount += 1;
     });

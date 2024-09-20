@@ -19,6 +19,7 @@ import {
   FormTextInput,
   FormWrapper,
 } from "@/components/recipe-form-components";
+import { useRouter } from "next/navigation";
 
 type RecipeFormProps = {
   categories: Category[];
@@ -52,6 +53,8 @@ export type RecipeFormData = z.infer<typeof recipeFormSchema>;
 const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const form = useForm<RecipeFormData>({
     resolver: zodResolver(recipeFormSchema),
@@ -103,6 +106,8 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
         toast.error("Select an image", { duration: 5000 });
         return;
       }
+      setIsSubmitting(true);
+
       const res = await supabase.storage
         .from("images")
         .upload(`recipe-images/${uuid()}`, imageFile);
@@ -113,6 +118,9 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
       await shareRecipe(data);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsSubmitting(false);
+      router.push("/recipes");
     }
   }
 
@@ -180,7 +188,9 @@ const RecipeForm: FC<RecipeFormProps> = ({ categories, tags }) => {
             handleFileChange={handleFileChange}
             removeImage={removeImage}
           />
-          <Button type="submit">Add Recipe</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            Add Recipe
+          </Button>
         </FormWrapper>
       </div>
     </div>

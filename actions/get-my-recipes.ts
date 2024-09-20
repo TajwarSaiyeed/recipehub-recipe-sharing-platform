@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 
-export const getMyRecipes = async (page: number = 1, limit: number = 50) => {
+export const getMyRecipes = async (page: number = 1, limit: number = 12) => {
   const session = await auth();
   const userId = session?.user?.id;
 

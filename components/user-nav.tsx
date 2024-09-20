@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
-import { Bookmark, UserIcon, Utensils } from "lucide-react";
+import { Bookmark, UserIcon, UsersIcon, Utensils } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -88,6 +88,18 @@ const UserNav = () => {
             <span>My Favorites</span>
           </Link>
         </DropdownMenuItem>
+        {session.data?.user.role === "Admin" && (
+          <DropdownMenuItem>
+            <Link
+              href="/admin/users"
+              className="flex items-center gap-2"
+              prefetch={false}
+            >
+              <UsersIcon className="h-4 w-4" />
+              <span>All Users</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <button className={"w-full"} onClick={handleLogout}>

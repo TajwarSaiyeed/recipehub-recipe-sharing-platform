@@ -26,7 +26,6 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
   const [loading, setLoading] = useState(false);
   const session = useSession();
   const pathName = usePathname();
-  const router = useRouter();
 
   const isSavedForLater = recipe.favUsers.some(
     (user) => user.id === session.data?.user?.id
@@ -49,6 +48,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
       setLoading(false);
     }
   };
+
   return (
     <div className="relative flex flex-col justify-between overflow-hidden rounded-lg group">
       <div>
@@ -107,7 +107,7 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
       </div>
       <div>
         <Link
-          href={`/users/${recipe.author.id}`}
+          href={`/user/${recipe.author.id}`}
           className="flex items-center gap-1 text-muted-foreground px-1 py-2 "
         >
           <Image

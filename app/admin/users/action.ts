@@ -11,7 +11,11 @@ export const users = async (
       skip: skip,
       take: limit,
       include: {
-        recipes: true,
+        recipes: {
+          include: {
+            reviews: true,
+          },
+        },
       },
       where: {
         OR: [

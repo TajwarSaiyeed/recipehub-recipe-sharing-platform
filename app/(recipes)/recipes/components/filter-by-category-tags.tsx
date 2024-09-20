@@ -4,7 +4,7 @@ import qs from "query-string";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Category, Tag } from "@prisma/client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
 import { FilterIcon, SearchIcon, TagIcon } from "lucide-react";
 import RecipeCardSkeleton from "@/components/recipe-card-skeleton";
@@ -17,6 +17,15 @@ import React, {
   useState,
 } from "react";
 import RecipeCard, { RecipeWithCategoryTags } from "@/components/recipe-card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 interface FilterByCategoryTags {
   categories: Category[];
@@ -24,6 +33,8 @@ interface FilterByCategoryTags {
   recipes: RecipeWithCategoryTags[];
   category?: string;
   tagsArray?: string[];
+  totalPages: number;
+  currentPage: number;
 }
 
 const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
@@ -32,6 +43,8 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
   recipes,
   category,
   tagsArray = [],
+  totalPages,
+  currentPage,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedValue = useDebounce(searchQuery);
@@ -221,6 +234,64 @@ const FilterByCategoryTags: FC<FilterByCategoryTags> = ({
           ))}
         </section>
       )}
+
+      <Pagination className={"mt-5"}>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => {
+                if (currentPage === 1) {
+                  return;
+                }
+                router.push(`?page=${currentPage - 1}`);
+              }}
+              className={cn(
+                "cursor-pointer",
+                buttonVariants({
+                  variant: currentPage === 1 ? "outline" : "default",
+                  size: "sm",
+                }),
+                {
+                  "cursor-not-allowed": currentPage === 1,
+                }
+              )}
+            />
+          </PaginationItem>
+          {[...Array(totalPages)].map((_, index) => (
+            <PaginationItem
+              key={index}
+              onClick={() => {
+                router.push(`?page=${index + 1}`);
+              }}
+              className={cn("cursor-pointer", {
+                "cursor-not-allowed": index + 1 === currentPage,
+              })}
+            >
+              <PaginationLink isActive={index + 1 === currentPage}>
+                {index + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() =>
+                currentPage !== totalPages &&
+                router.push(`?page=${currentPage + 1}`)
+              }
+              className={cn(
+                "cursor-pointer",
+                buttonVariants({
+                  variant: currentPage === totalPages ? "outline" : "default",
+                  size: "sm",
+                }),
+                {
+                  "cursor-not-allowed": currentPage === totalPages,
+                }
+              )}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </>
   );
 };
