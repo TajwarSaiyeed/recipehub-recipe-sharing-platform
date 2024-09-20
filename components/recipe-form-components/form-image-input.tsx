@@ -10,7 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import Image from "next/image";
 import { Trash2Icon } from "lucide-react";
 
 type FormImageInputProps = {
@@ -46,14 +45,21 @@ const FormImageInput: FC<FormImageInputProps> = ({
           <FormControl>
             {imageFile && imageSrc ? (
               <div className="relative bg-zinc-100 aspect-square w-full overflow-hidden rounded-xl">
-                <Image
-                  fill
-                  loading={"lazy"}
+                {/*<Image*/}
+                {/*  fill*/}
+                {/*  loading={"lazy"}*/}
+                {/*  src={imageSrc || ""}*/}
+                {/*  alt="Selected"*/}
+                {/*  className={*/}
+                {/*    "object-cover w-64 h-64 border border-zinc-100 rounded-xl"*/}
+                {/*  }*/}
+                {/*/>*/}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={imageSrc || ""}
                   alt="Selected"
-                  className={
-                    "object-cover w-64 h-64 border border-zinc-100 rounded-xl"
-                  }
+                  loading={"lazy"}
+                  className="object-cover w-64 h-64 border border-zinc-100 rounded-xl"
                 />
                 <Button
                   type="button"

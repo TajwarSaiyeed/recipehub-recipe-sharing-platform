@@ -1,5 +1,4 @@
 import { FC } from "react";
-import Image from "next/image";
 import { toast } from "sonner";
 import prisma from "@/lib/prisma";
 import getSession from "@/lib/get-session";
@@ -68,11 +67,21 @@ const RecipePage: FC<RecipePageProps> = async ({ params: { recipeid } }) => {
       <div className="container mx-auto max-w-5xl px-4 py-8 sm:py-12 md:py-16">
         <div className="grid gap-8 md:grid-cols-2">
           <div>
-            <Image
+            {/*<Image*/}
+            {/*  src={`${recipe.image || ""}?${new Date().getTime()}`}*/}
+            {/*  width={800}*/}
+            {/*  height={600}*/}
+            {/*  alt="Recipe Image"*/}
+            {/*  className="w-full rounded-lg object-cover"*/}
+            {/*  style={{ aspectRatio: "800/600", objectFit: "cover" }}*/}
+            {/*/>*/}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={`${recipe.image || ""}?${new Date().getTime()}`}
-              width={800}
-              height={600}
+              width="800"
+              height="600"
               alt="Recipe Image"
+              loading={"lazy"}
               className="w-full rounded-lg object-cover"
               style={{ aspectRatio: "800/600", objectFit: "cover" }}
             />

@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import Image from "next/image";
 import { StarIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -31,11 +30,18 @@ const User = async ({ params }: UserProps) => {
                 "relative h-24 w-24 md:w-32 md:h-32 rounded-full overflow-hidden"
               }
             >
-              <Image
+              {/*<Image*/}
+              {/*  src={user?.image || ""}*/}
+              {/*  alt={user?.name || ""}*/}
+              {/*  loading={"lazy"}*/}
+              {/*  fill*/}
+              {/*  className="rounded-full object-cover w-full h-full"*/}
+              {/*/>*/}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={user?.image || ""}
                 alt={user?.name || ""}
                 loading={"lazy"}
-                fill
                 className="rounded-full object-cover w-full h-full"
               />
             </div>

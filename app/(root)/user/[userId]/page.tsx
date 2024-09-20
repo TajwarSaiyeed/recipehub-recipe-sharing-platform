@@ -1,7 +1,6 @@
 import React from "react";
 import { getUserDetails } from "@/actions/get-user-details-with-avg-rating";
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { StarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,11 +28,18 @@ const Page = async ({ params: { userId } }: UserPageProps) => {
                 "relative h-24 w-24 md:w-32 md:h-32 rounded-full overflow-hidden"
               }
             >
-              <Image
+              {/*<Image*/}
+              {/*  src={user?.image || ""}*/}
+              {/*  alt={user?.name || ""}*/}
+              {/*  loading={"lazy"}*/}
+              {/*  fill*/}
+              {/*  className="rounded-full object-cover w-full h-full"*/}
+              {/*/>*/}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={user?.image || ""}
                 alt={user?.name || ""}
                 loading={"lazy"}
-                fill
                 className="rounded-full object-cover w-full h-full"
               />
             </div>

@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import Link from "next/link";
-import Image from "next/image";
 import { Tag } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -72,10 +71,19 @@ const SimilarRecipes: FC<SimilarRecipesProps> = ({
                 className="group block overflow-hidden rounded-lg"
                 prefetch={false}
               >
-                <Image
+                {/*<Image*/}
+                {/*    src={`${recipe.image || ""}?${new Date().getTime()}`}*/}
+                {/*    width={400}*/}
+                {/*    height={300}*/}
+                {/*    alt={recipe.title}*/}
+                {/*    className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"*/}
+                {/*    style={{aspectRatio: "400/300", objectFit: "cover"}}*/}
+                {/*/>*/}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={`${recipe.image || ""}?${new Date().getTime()}`}
-                  width={400}
-                  height={300}
+                  width="400"
+                  height="300"
                   alt={recipe.title}
                   className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   style={{ aspectRatio: "400/300", objectFit: "cover" }}

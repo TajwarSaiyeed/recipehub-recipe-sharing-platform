@@ -1,15 +1,14 @@
 "use client";
 import Link from "next/link";
-import { toast } from "sonner";
-import Image from "next/image";
-import { FC, useState } from "react";
-import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { SaveForLater } from "@/actions/save-for-later";
+import {toast} from "sonner";
+import {FC, useState} from "react";
+import {useSession} from "next-auth/react";
+import {usePathname} from "next/navigation";
+import {Button, buttonVariants} from "@/components/ui/button";
+import {SaveForLater} from "@/actions/save-for-later";
 import CustomTooltip from "@/components/custom-tooltip";
-import { Category, Recipe, Tag, User } from "@prisma/client";
-import { Bookmark, LoaderCircle, Pen, StarIcon, TagIcon } from "lucide-react";
+import {Category, Recipe, Tag, User} from "@prisma/client";
+import {Bookmark, LoaderCircle, Pen, StarIcon, TagIcon} from "lucide-react";
 
 export type RecipeWithCategoryTags = Recipe & {
   category: Category;
@@ -54,14 +53,22 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
       <div>
         <div className="relative bg-zinc-100 aspect-square w-full overflow-hidden rounded-xl">
           <Link href={`/recipes/${recipe.id}`}>
-            <Image
-              src={`${recipe.image || ""}?${new Date().getTime()}`}
-              alt={recipe.title}
-              fill
-              loading={"lazy"}
-              className={
-                "object-cover w-64 h-64 border border-zinc-100 rounded-xl"
-              }
+            {/*<Image*/}
+            {/*  src={`${recipe.image || ""}?${new Date().getTime()}`}*/}
+            {/*  alt={recipe.title}*/}
+            {/*  fill*/}
+            {/*  loading={"lazy"}*/}
+            {/*  className={*/}
+            {/*    "object-cover w-64 h-64 border border-zinc-100 rounded-xl"*/}
+            {/*  }*/}
+            {/*/>*/}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+                src={`${recipe.image || ""}?${new Date().getTime()}`}
+                alt={recipe.title}
+                className={"object-cover w-64 h-64 border border-zinc-100 rounded-xl"}
+                loading={"lazy"}
+
             />
           </Link>
           {pathName != "/me/recipes" ? (
@@ -110,13 +117,21 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
           href={`/user/${recipe.author.id}`}
           className="flex items-center gap-1 text-muted-foreground px-1 py-2 "
         >
-          <Image
-            src={`${recipe.author.image || ""}?${new Date().getTime()}`}
-            alt={recipe.author.name || ""}
-            width={16}
-            height={16}
-            className={"rounded-full"}
-          />
+          {/*<Image*/}
+          {/*  src={`${recipe.author.image || ""}?${new Date().getTime()}`}*/}
+          {/*  alt={recipe.author.name || ""}*/}
+          {/*  width={16}*/}
+          {/*  height={16}*/}
+          {/*  className={"rounded-full"}*/}
+          {/*/>*/}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+                src={`${recipe.author.image || ""}?${new Date().getTime()}`}
+                alt={recipe.author.name || ""}
+                width={16}
+                height={16}
+                className={"rounded-full"}
+            />
           <div className="text-sm text-muted-foreground truncate">
             {recipe.author.name}
           </div>
