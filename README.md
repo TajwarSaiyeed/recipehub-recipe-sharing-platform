@@ -1,3 +1,5 @@
+![showcase](./github.png)
+
 # RecipeHub - Recipe Sharing Platform
 Welcome to the RecipeHub wiki! This is the official documentation for the RecipeHub recipe-sharing platform. Here, you'll find an overview of the project, how to get started, the current status, and guidelines for contributing.
 
