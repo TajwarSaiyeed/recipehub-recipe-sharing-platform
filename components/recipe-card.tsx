@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
-import {toast} from "sonner";
-import {FC, useState} from "react";
-import {useSession} from "next-auth/react";
-import {usePathname} from "next/navigation";
-import {Button, buttonVariants} from "@/components/ui/button";
-import {SaveForLater} from "@/actions/save-for-later";
+import { toast } from "sonner";
+import { FC, useState } from "react";
+import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { SaveForLater } from "@/actions/save-for-later";
 import CustomTooltip from "@/components/custom-tooltip";
-import {Category, Recipe, Tag, User} from "@prisma/client";
-import {Bookmark, LoaderCircle, Pen, StarIcon, TagIcon} from "lucide-react";
+import { Category, Recipe, Tag, User } from "@prisma/client";
+import { Bookmark, LoaderCircle, Pen, StarIcon, TagIcon } from "lucide-react";
 
 export type RecipeWithCategoryTags = Recipe & {
   category: Category;
@@ -62,14 +62,17 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
             {/*    "object-cover w-64 h-64 border border-zinc-100 rounded-xl"*/}
             {/*  }*/}
             {/*/>*/}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <div className="relative w-full h-full overflow-hidden rounded-xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={`${recipe.image || ""}?${new Date().getTime()}`}
                 alt={recipe.title}
-                className={"object-cover w-64 h-64 border border-zinc-100 rounded-xl"}
+                className={
+                  "object-cover w-full h-full border border-zinc-100 rounded-xl"
+                }
                 loading={"lazy"}
-
-            />
+              />
+            </div>
           </Link>
           {pathName != "/me/recipes" ? (
             <CustomTooltip content={"Save for later"}>
@@ -124,14 +127,14 @@ const RecipeCard: FC<RecipeCardProps> = ({ recipe }) => {
           {/*  height={16}*/}
           {/*  className={"rounded-full"}*/}
           {/*/>*/}
+          <div className={"relative w-5 h-5 rounded-full overflow-hidden"}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-                src={`${recipe.author.image || ""}?${new Date().getTime()}`}
-                alt={recipe.author.name || ""}
-                width={16}
-                height={16}
-                className={"rounded-full"}
+              src={`${recipe.author.image || ""}?${new Date().getTime()}`}
+              alt={recipe.author.name || ""}
+              className={"rounded-full w-full h-full object-cover"}
             />
+          </div>
           <div className="text-sm text-muted-foreground truncate">
             {recipe.author.name}
           </div>

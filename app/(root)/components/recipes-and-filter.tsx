@@ -48,7 +48,7 @@ const RecipesAndFilter: FC<RecipesAndFilterProps> = ({ categories, query }) => {
 
     fetchRecipes().then(({ newRecipes, totalPages }) => {
       setRecipes((prevRecipes: RecipeWithCategoryTags[]) =>
-        pageNo === 1
+        pageNo === 1 || selectedCategory
           ? newRecipes || []
           : [...prevRecipes, ...(newRecipes || [])]
       );
@@ -93,7 +93,7 @@ const RecipesAndFilter: FC<RecipesAndFilterProps> = ({ categories, query }) => {
         onCategoryChange={handleCategoryChange}
       />
       {isLoading && pageNo === 1 ? (
-        <section className="mb-5 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+        <section className="mb-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {[...Array(8)].map((_, index) => (
             <RecipeCardSkeleton key={index} />
           ))}
@@ -103,7 +103,7 @@ const RecipesAndFilter: FC<RecipesAndFilterProps> = ({ categories, query }) => {
           <p className="text-lg text-muted-foreground">No recipes found.</p>
         </div>
       ) : (
-        <section className="mb-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+        <section className="mb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {recipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}

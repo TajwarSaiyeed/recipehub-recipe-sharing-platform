@@ -2,7 +2,7 @@
 import { Control } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   FormControl,
   FormField,
@@ -59,7 +59,7 @@ const FormImageInput: FC<FormImageInputProps> = ({
                   src={imageSrc || ""}
                   alt="Selected"
                   loading={"lazy"}
-                  className="object-cover w-64 h-64 border border-zinc-100 rounded-xl"
+                  className="object-cover w-full h-full border border-zinc-100 rounded-xl"
                 />
                 <Button
                   type="button"
