@@ -45,9 +45,6 @@ const Page = async ({ params: { userId } }: UserPageProps) => {
             </div>
             <div className="grid gap-1 text-center">
               <h3 className="text-2xl md:text-3xl font-bold">{user?.name}</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
-                {user?.email}
-              </p>
               <Separator className={"my-5"} />
               <div className={"flex justify-between items-center"}>
                 <div className="flex items-center gap-1 text-primary">
